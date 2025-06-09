@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Click Game</title>
+<style>
+  body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+  }
+
+  #game-container {
+    position: relative;
+    width: 80vw;
+    height: 80vh;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #scoreboard {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff5722;
+  }
+
+  #circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e91e63;
+    position: absolute;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div id="game-container">
+  <div id="scoreboard">Score: <span id="score">0</span> | Time: <span id="time">30</span></div>
+  <div id="circle"></div>
+</div>
+
+<audio id="beep" src="beep.mp3" preload="auto"></audio>
+<audio id="bgm" src="music.mp3" loop autoplay></audio>
+
+<script>
+const circle = document.getElementById('circle');
+const scoreEl = document.getElementById('score');
+const timeEl = document.getElementById('time');
+const beep = document.getElementById('beep');
+const bgm = document.getElementById('bgm');
+
+let score = 0;
+let timeLeft = 30;
+let timerId;
+
+function randomPosition() {
+  const container = document.getElementById('game-container');
+  const maxX = container.clientWidth - circle.offsetWidth;
+  const maxY = container.clientHeight - circle.offsetHeight;
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+  circle.style.left = x + 'px';
+  circle.style.top = y + 'px';
+}
+
+function startGame() {
+  randomPosition();
+  timerId = setInterval(() => {
+    timeLeft--;
+    timeEl.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  }, 1000);
+}
+
+function endGame() {
+  clearInterval(timerId);
+  circle.style.display = 'none';
+  alert('Game over! Your score: ' + score);
+}
+
+circle.addEventListener('click', () => {
+  score++;
+  scoreEl.textContent = score;
+  beep.currentTime = 0;
+  beep.play();
+  randomPosition();
+});
+
+window.addEventListener('load', startGame);
+</script>
+</body>
+</html>

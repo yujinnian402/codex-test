@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Click Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 <style>
   body {
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f8f8, #dcdcdc);
+    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -46,24 +47,42 @@
     position: absolute;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  #circle.clicked {
+    transform: scale(1.2);
+  }
+
+  #music-toggle {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    font-size: 18px;
+    border: none;
+    background: #ffeb3b;
+    border-radius: 5px;
+    cursor: pointer;
   }
 </style>
 </head>
 <body>
 <div id="game-container">
   <div id="scoreboard">Score: <span id="score">0</span> | Time: <span id="time">30</span></div>
+  <button id="music-toggle">🔊</button>
   <div id="circle"></div>
 </div>
 
-<audio id="beep" src="beep.mp3" preload="auto"></audio>
-<audio id="bgm" src="music.mp3" loop autoplay></audio>
+<audio id="bgm" src="music.mp3" loop></audio>
 
 <script>
 const circle = document.getElementById('circle');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
-const beep = document.getElementById('beep');
 const bgm = document.getElementById('bgm');
+const musicToggle = document.getElementById('music-toggle');
+const beep = new Audio('beep.mp3');
 
 let score = 0;
 let timeLeft = 30;
@@ -81,6 +100,7 @@ function randomPosition() {
 
 function startGame() {
   randomPosition();
+  bgm.play();
   timerId = setInterval(() => {
     timeLeft--;
     timeEl.textContent = timeLeft;
@@ -101,7 +121,19 @@ circle.addEventListener('click', () => {
   scoreEl.textContent = score;
   beep.currentTime = 0;
   beep.play();
+  circle.classList.add('clicked');
+  setTimeout(() => circle.classList.remove('clicked'), 200);
   randomPosition();
+});
+
+musicToggle.addEventListener('click', () => {
+  if (bgm.paused) {
+    bgm.play();
+    musicToggle.textContent = '🔊';
+  } else {
+    bgm.pause();
+    musicToggle.textContent = '🔇';
+  }
 });
 
 window.addEventListener('load', startGame);
